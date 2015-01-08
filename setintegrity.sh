@@ -1,5 +1,7 @@
 #!/bin/csh
 
+#Script  to search and remove all tables from the integrity pending state of a DB2 database.
+
 if [[ -n "$2" ]]
 then
 

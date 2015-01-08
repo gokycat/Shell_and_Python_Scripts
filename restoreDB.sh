@@ -1,6 +1,8 @@
 #!/bin/ksh
 DB_BACKUP_DIR=~/backup
 
+#Script to restore a DB2 database from the backup image.
+
 echo "The backup dir is: ${DB_BACKUP_DIR}"
 if [[ -n "$2" ]]
 then
