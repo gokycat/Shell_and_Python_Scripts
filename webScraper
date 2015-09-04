@@ -1,0 +1,39 @@
+import sys
+import os
+import requests
+from BeautifulSoup import BeautifulSoup
+import csv
+
+#download a web page
+def downloadPage():
+	url = 'http://www.showmeboone.com/sheriff/JailResidents/JailResidents.asp'
+	response = requests.get(url)
+	return(response.content)
+
+#extract data from the downloaded web page
+def getData(html):
+	soup = BeautifulSoup(html)
+	table = soup.find('tbody', attrs={'class': 'stripe'})
+	list_of_rows = []
+	for row in table.findAll('tr'):
+		list_of_cells = []
+		for cell in row.findAll('td'):
+			text = cell.text.replace('&nbsp;', '')
+			list_of_cells.append(text)
+		list_of_rows.append(list_of_cells)
+	return(list_of_rows) 
+
+#create CSV of the extracted data
+def	createCSV(scrapedDataList,filename):
+	outfile = open(filename, "wb")
+	writer = csv.writer(outfile)
+	writer.writerows(scrapedDataList)
+	outfile.close()
+
+def main():	
+	html=downloadPage()
+	scrapedDataList=getData(html)
+	createCSV(scrapedDataList,'output.csv')
+	
+if __name__ == '__main__':
+  main()
