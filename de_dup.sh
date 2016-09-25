@@ -50,12 +50,33 @@ do
 	header=`head -1 ./${file}`
 	echo "### Header for file: ${file} is header: ${header}"
 	total_columns=`echo $header | awk -F${delimiter} '{print NF}'`
+	count=0
 	for ((i=1;i<=${total_columns};i++)); do
-		echo "### Computing md5 for column number "
+		echo "### Computing md5 for column number ${i}"
     	column_md5=`cut -d${delimiter} -f${i} ${file} | tail -n +2 | md5`
+    	if [ ${i} -eq 1 ]
+    	then
+    		unique_md5s[${count}]=${column_md5}
+    		unique_columns[${count}]=${i}
+    		count=$((count+1))
+		elif [[ " ${unique_md5s[@]} " =~ " ${column_md5} " ]]; then
+    		echo "duplicate column found NUMBER: ${i}"
+		else
+    		unique_md5s[${count}]=${column_md5}
+    		unique_columns[${count}]=${i}
+    		count=$((count+1))
+		fi
     	echo "md5 for column ${i} is ${column_md5}"
 	done	
-
+	echo "printing unique column numbers ${unique_columns[@]}"
+	output_file=`../${output_dir}/${file}`
+	echo ${output_file}
+	# #chmod 777 ${output_file}
+	# for col in `echo ${unique_columns[@]} | tr " " "\n"`
+	# do
+ #    	column_data=`cut -d${delimiter} -f${i} ${file}`
+ #    	paste -d , ${output_file} ${column_data} >> ${output_file}
+	# done
 done
 
 
